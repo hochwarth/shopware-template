@@ -69,5 +69,27 @@
             <argument>%env(SHOPWARE_ES_HOSTS)%</argument>
             <argument>%env(SHOPWARE_ES_INDEX_PREFIX)%</argument>
         </service>
+
+        <service id="Shopware\Production\Command\CreateBundleCommand">
+            <argument>%kernel.project_dir%</argument>
+            <tag name="console.command"/>
+        </service>
+
+        <service id="Shopware\Production\Service\DatabaseService">
+            <argument>%kernel.project_dir%</argument>
+            <argument id="Doctrine\DBAL\Connection" type="service"/>
+        </service>
+
+        <service id="Shopware\Production\Command\DatabaseDumpCommand">
+            <argument id="Shopware\Production\Service\DatabaseService" type="service"/>
+            <tag name="console.command"/>
+        </service>
+
+        <service id="Shopware\Production\Command\DatabaseImportCommand">
+            <argument>%kernel.project_dir%</argument>
+            <argument id="Shopware\Production\Service\DatabaseService" type="service"/>
+            <tag name="console.command"/>
+        </service>
+
     </services>
 </container>

@@ -1,0 +1,15 @@
+<sw-cms-list-item
+    :page="cmsPage"
+    class="hochwarth-cms-base-item"
+    @click.native="onClickItem">
+    <template #contextMenu>
+        <div
+            class="hochwarth-cms-base-item__selected-indicator"
+            :class="selectionIndicatorClasses">
+            <sw-icon
+                v-if="selected"
+                small
+                name="small-default-checkmark-line-small"/>
+        </div>
+    </template>
+</sw-cms-list-item>

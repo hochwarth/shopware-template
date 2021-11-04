@@ -1,0 +1,9 @@
+<div class="hochwarth-cms-library">
+    <hochwarth-cms-item
+        v-for="cmsPage in cmsPages"
+        :key="cmsPage.id"
+        :cmsPage="cmsPage"
+        :selected="isItemSelected(cmsPage)"
+        @cms-page-selection-add="handleItemSelected"
+        @cms-page-selection-remove="handleItemUnselected" />
+</div>

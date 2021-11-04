@@ -1,0 +1,27 @@
+<div class="hochwarth-cms-import-export-view-export">
+    <sw-card>
+        <div class="hochwarth-cms-import-export-view-export__toolbar">
+            <sw-button
+                size="small"
+                @click="openCmsModal">
+                Auswählen
+            </sw-button>
+        </div>
+        <sw-data-grid
+            :dataSource="selectedItems"
+            :columns="columns"
+            :showSelection="false"
+            :showActions="false">
+        </sw-data-grid>
+
+        <sw-button
+            v-if="selectedItems.length > 0"
+            variant="primary"
+            @click="download">Export</sw-button>
+    </sw-card>
+
+    <hochwarth-cms-modal
+        v-if="cmsModalIsOpen"
+        :selectedItems="selectedItems"
+        @modal-close="closeCmsModal" />
+</div>

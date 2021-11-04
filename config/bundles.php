@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php  declare(strict_types=1);
 
 return [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
@@ -17,4 +17,5 @@ return [
     Shopware\Administration\Administration::class => ['all' => true],
     Shopware\Storefront\Storefront::class => ['all' => true],
     Shopware\Elasticsearch\Elasticsearch::class => ['all' => true],
+    Shopware\Production\HochwarthTools\HochwarthToolsBundle::class => ['all' => true],
 ];

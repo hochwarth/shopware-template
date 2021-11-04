@@ -1,0 +1,29 @@
+<sw-modal
+    class="hochwarth-cms-modal"
+    variant="full"
+    :title="$tc('hochwarth-cms-import-export.hochwarth-cms-modal.titleModal')"
+    @modal-close="$emit('modal-close')">
+
+    <div class="hochwarth-cms-modal__content">
+        {#<div class="hochwarth-cms-base-item">
+            <div
+                class="hochwarth-cms-base-item__selected-indicator">
+                <sw-icon
+                    small
+                    name="small-default-checkmark-line-small" />
+            </div>
+            <div class="hochwarth-cms-base-item__preview_container"></div>
+        </div>#}
+        <hochwarth-cms-library
+            v-model="selectedItems"
+        ></hochwarth-cms-library>
+    </div>
+
+    <template #modal-footer>
+        <sw-button
+            variant="primary"
+            @click="$emit('modal-close')">
+            Bestätigen
+        </sw-button>
+    </template>
+</sw-modal>

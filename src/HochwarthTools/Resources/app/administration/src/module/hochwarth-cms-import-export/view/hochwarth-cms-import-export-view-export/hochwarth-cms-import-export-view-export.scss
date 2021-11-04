@@ -1,0 +1,16 @@
+@import "~scss/variables";
+
+.hochwarth-cms-import-export-view-export {
+    .sw-data-grid {
+        border: 1px solid $color-gray-300;
+        border-top: none;
+    }
+}
+
+.hochwarth-cms-import-export-view-export__toolbar {
+    display: grid;
+    justify-content: end;
+    padding: 25px 35px;
+    background-color: $color-gray-100;
+    border: 1px solid $color-gray-300;
+}

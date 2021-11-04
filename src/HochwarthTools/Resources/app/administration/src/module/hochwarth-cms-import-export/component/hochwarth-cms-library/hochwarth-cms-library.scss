@@ -1,0 +1,29 @@
+.hochwarth-cms-library {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 250px);
+    grid-gap: 30px;
+}
+
+.hochwarth-cms-base-item__selected-indicator {
+    position: absolute;
+    //top: 16px;
+    //left: 16px;
+    //visibility: hidden;
+    //position: absolute;
+    display: grid;
+    top: 33px;
+    left: 33px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border: 1px solid #d1d9e0;
+    border-radius: 4px;
+    z-index: 1;
+
+    .sw-icon {
+        color: #fff;
+        position: relative;
+        top: -1px;
+        left: -1px;
+    }
+}

@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php  declare(strict_types=1);
 
 $bundles = [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
@@ -17,6 +17,7 @@ $bundles = [
     Shopware\Administration\Administration::class => ['all' => true],
     Shopware\Storefront\Storefront::class => ['all' => true],
     Shopware\Elasticsearch\Elasticsearch::class => ['all' => true],
+    Shopware\Production\HochwarthTools\HochwarthToolsBundle::class => ['all' => true],
 ];
 
 if (\class_exists('Shopware\Core\Maintenance\Maintenance')) {

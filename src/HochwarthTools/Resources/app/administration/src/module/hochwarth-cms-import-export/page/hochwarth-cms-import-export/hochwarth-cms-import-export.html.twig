@@ -1,0 +1,14 @@
+<sw-page>
+    <sw-card-view slot="content">
+        <sw-tabs>
+            <sw-tabs-item :route="{ name: 'hochwarth.cms.import.export.index.import' }">
+                importTab
+            </sw-tabs-item>
+            <sw-tabs-item :route="{ name: 'hochwarth.cms.import.export.index.export' }">
+                exportTab
+            </sw-tabs-item>
+        </sw-tabs>
+
+        <router-view />
+    </sw-card-view>
+</sw-page>

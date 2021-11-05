@@ -1,0 +1,9 @@
+.hochwarth-cms-base-item {
+
+    & &__selected-indicator {
+        &.selected-indicator--checked {
+            background: #189eff;
+            border: 1px solid #189eff;
+        }
+    }
+}

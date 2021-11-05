@@ -17,5 +17,10 @@
             </call>
         </service>
 
+        <service id="Shopware\Production\HochwarthTools\Command\CreateBundleCommand">
+            <argument>%kernel.project_dir%</argument>
+            <tag name="console.command"/>
+        </service>
+
     </services>
 </container>

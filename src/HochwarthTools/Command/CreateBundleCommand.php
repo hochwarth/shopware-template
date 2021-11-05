@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shopware\Production\Command;
+namespace Shopware\Production\HochwarthTools\Command;
 
 use Doctrine\DBAL\Connection;
 use Ifsnop\Mysqldump\Mysqldump;
@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter
 
 class CreateBundleCommand extends Command
 {
-    protected static $defaultName = 'create:shopware:bundle';
+    protected static $defaultName = 'hochwarth:create:bundle';
     private string $projectDir;
 
     private string $bundleTemplate = <<<EOL
@@ -56,6 +56,7 @@ EOL;
         $this
             ->setDescription('Creates a Shopware bundle')
             ->addArgument('bundleName', InputArgument::REQUIRED, 'Bundle name')
+            ->addArgument('namespace', InputArgument::REQUIRED, 'Bundle namespace')
             ->addOption('theme', 't', InputOption::VALUE_NONE, 'Is theme');
 
     }
@@ -82,7 +83,7 @@ EOL;
         $bundleFile = $directory . '/' . $name . 'Bundle.php';
         $servicesXmlFile = $directory . '/Resources/config/services.xml';
 
-        $namespace = 'Shopware\\Production\\' . $name;
+        $namespace = $input->getArgument('namespace');
         $bundle = str_replace(
             ['#namespace#', '#class#', '#theme#', '#use#'],
             [$namespace, $name . 'Bundle', $isTheme ? ' implements ThemeInterface' : '', "\nuse Shopware\\Storefront\\Framework\\ThemeInterface;"],

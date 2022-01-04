@@ -15,6 +15,8 @@
 
 .unit_base:
     extends: .test_base
+    tags:
+        - m5.large
     variables:
         APP_ENV: test
         APP_SECRET: secret
@@ -34,9 +36,14 @@
         GIT_STRATEGY: none
     before_script:
         - export TAG=${CI_COMMIT_TAG:-$(cat artifacts/TAG)}
-        - cp artifacts/install*.tar.xz install.tar.xz
+        - find > /tmp/file_list
+        - mv artifacts/install*.tar.xz /tmp/install.tar.xz
+        - rm -Rf .* * || true
+        - mv /tmp/install.tar.xz .
         - tar -xf install.tar.xz
         - rm install.tar.xz
+        - mkdir artifacts
+        - mv /tmp/file_list artifacts/
         - /entrypoint supervisord > artifacts/supervisord.log 2>&1 &
     script:
         - bin/console system:install --drop-database --basic-setup --force
@@ -64,6 +71,7 @@
         paths:
             - artifacts/*.junit.xml
             - artifacts/supervisord.log
+            - artifacts/file_list
             - var/log/*
             - $CI_PROJECT_DIR/stdout.log
         reports:
@@ -87,7 +95,7 @@
         expire_in: 1 week
         when: always
         paths:
-            - vendor/shopware/recovery/Test/e2e/artifacts/
+            - tests/e2e/artifacts/
             - var/log/*
 
 .e2e_install_base:
@@ -148,11 +156,9 @@
         # make sure that chrome uses latest version
         - apt-get -fy --only-upgrade install google-chrome-stable
         # get e2e from install archive
-        - mkdir .gitlab-ci/e2e/test
-        - cp artifacts/install*.tar.xz .gitlab-ci/e2e/test/install.tar.xz
-        - cd .gitlab-ci/e2e/test
-        - tar -xvf install.tar.xz ./vendor/shopware/recovery/Test/e2e/
-        - mv ./vendor/shopware/recovery/Test/e2e/* .
+        - cd $CI_PROJECT_DIR
+        - tar -xf artifacts/tests.tar
+        - cd tests/e2e
         - npm clean-install
         - cd $CI_PROJECT_DIR
         - chown -R application:application $CI_PROJECT_DIR

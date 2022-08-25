@@ -41,7 +41,7 @@ if (is_file(dirname(__DIR__) . '/files/update/update.json') || is_dir(dirname(__
 
 $projectRoot = dirname(__DIR__);
 if (class_exists(Dotenv::class) && (file_exists($projectRoot . '/.env.local.php') || file_exists($projectRoot . '/.env') || file_exists($projectRoot . '/.env.dist'))) {
-    (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__) . '/.env');
+    (new Dotenv())->usePutenv()->setProdEnvs(['prod', 'e2e'])->bootEnv(dirname(__DIR__) . '/.env');
 }
 
 $appEnv = $_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? 'dev';
@@ -66,6 +66,11 @@ if ($trustedHosts) {
 $request = Request::createFromGlobals();
 
 $kernel = new HttpKernel($appEnv, $debug, $classLoader);
+
+if ($_SERVER['COMPOSER_PLUGIN_LOADER'] ?? $_SERVER['DISABLE_EXTENSIONS'] ?? false) {
+    $kernel->setPluginLoader(new \Shopware\Core\Framework\Plugin\KernelPluginLoader\ComposerPluginLoader($classLoader));
+}
+
 $result = $kernel->handle($request);
 
 $result->getResponse()->send();

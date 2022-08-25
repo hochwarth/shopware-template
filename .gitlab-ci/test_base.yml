@@ -34,6 +34,7 @@
         SHOPWARE_ES_INDEX_PREFIX: sw
         FEATURE_ALL: "false"
         GIT_STRATEGY: none
+        SHOPWARE_HTTP_CACHE_ENABLED: 0
     before_script:
         - export TAG=${CI_COMMIT_TAG:-$(cat artifacts/TAG)}
         - find > /tmp/file_list
@@ -42,10 +43,15 @@
         - mv /tmp/install.tar.xz .
         - tar -xf install.tar.xz
         - rm install.tar.xz
-        - mkdir artifacts
+        - mkdir artifacts var/logs || true
+        - chmod +w var/logs
         - mv /tmp/file_list artifacts/
-        - /entrypoint supervisord > artifacts/supervisord.log 2>&1 &
+        - SERVICE_PHPFPM_OPTS=--allow-to-run-as-root CONTAINER_UID=root /entrypoint supervisord > artifacts/supervisord.log 2>&1 &
     script:
+        # big hack to allow mocking of final classes. In platform this is handled by dg/bypass-finals, but it does not seem to work in production
+        - >
+          grep -R 'final class' vendor -l | grep '\.php$' | xargs sed -i -e 's/^final class/class/g';
+          grep -R 'final public function' vendor -l | grep '\.php$' | xargs sed -i -e 's/final public function/public function/g'
         - bin/console system:install --drop-database --basic-setup --force
         - php src/TestBootstrap.php
         - chown -R application:application .
@@ -59,7 +65,7 @@
             for TEST_SUITE in $TEST_SUITES; do
                 log_unit_file=artifacts/$TEST_SUITE.junit.xml
                 set -x
-                php vendor/bin/phpunit --configuration phpunit.xml.dist --log-junit "$log_unit_file" --colors=never --testsuite "$TEST_SUITE" || FAILED=1
+                php vendor/bin/phpunit --configuration phpunit.xml.dist --exclude-group=quarantined --log-junit "$log_unit_file" --colors=never --testsuite "$TEST_SUITE" || FAILED=1
                 set +x
                 tail -n +3 "$log_unit_file" | head -n -1 >> artifacts/phpunit.junit.xml
             done
@@ -151,7 +157,7 @@
         # start update api mock
         - DEBUG=* UPDATE_FILE_PATH=$CI_PROJECT_DIR/artifacts/update.zip node .gitlab-ci/e2e/update-api-mock.js &
         # start webserver
-        - /entrypoint supervisord > /dev/null 2>&1 &
+        - SERVICE_PHPFPM_OPTS=--allow-to-run-as-root CONTAINER_UID=root /entrypoint supervisord > artifacts/supervisord.log 2>&1 &
         - apt-get update && apt-get install -y xvfb
         # make sure that chrome uses latest version
         - apt-get -fy --only-upgrade install google-chrome-stable
@@ -191,7 +197,7 @@
         # start update api mock
         - DEBUG=* UPDATE_FILE_PATH=$CI_PROJECT_DIR/artifacts/update.zip node .gitlab-ci/e2e/update-api-mock.js &
         # start webserver
-        - /entrypoint supervisord > /dev/null 2>&1 &
+        - SERVICE_PHPFPM_OPTS=--allow-to-run-as-root CONTAINER_UID=root /entrypoint supervisord > artifacts/supervisord.log 2>&1 &
         - apt-get update && apt-get install -y xvfb jq
         # make sure that chrome uses latest version
         - apt-get -fy --only-upgrade install google-chrome-stable

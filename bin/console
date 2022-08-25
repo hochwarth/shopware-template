@@ -3,6 +3,7 @@
 
 use Composer\InstalledVersions;
 use Shopware\Core\DevOps\Environment\EnvironmentHelper;
+use Shopware\Core\Framework\Plugin\KernelPluginLoader\ComposerPluginLoader;
 use Shopware\Core\Framework\Plugin\KernelPluginLoader\DbalKernelPluginLoader;
 use Shopware\Core\Framework\Plugin\KernelPluginLoader\StaticKernelPluginLoader;
 use Shopware\Production\HttpKernel;
@@ -27,7 +28,7 @@ if (!class_exists(Application::class)) {
 
 $projectRoot = dirname(__DIR__);
 if (class_exists(Dotenv::class) && (file_exists($projectRoot . '/.env.local.php') || file_exists($projectRoot . '/.env') || file_exists($projectRoot . '/.env.dist'))) {
-    (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__) . '/.env');
+    (new Dotenv())->usePutenv()->setProdEnvs(['prod', 'e2e'])->bootEnv(dirname(__DIR__) . '/.env');
 }
 
 if (!EnvironmentHelper::hasVariable('PROJECT_ROOT')) {
@@ -62,8 +63,15 @@ if (trim($databaseUrl ?? '') === '') {
     $pluginLoader = new DbalKernelPluginLoader($classLoader, null, \Shopware\Core\Kernel::getConnection());
 }
 
+if ($_SERVER['COMPOSER_PLUGIN_LOADER'] ?? $_SERVER['DISABLE_EXTENSIONS'] ?? false) {
+    $pluginLoader = new ComposerPluginLoader($classLoader);
+}
+
 $kernel = new HttpKernel($env, $debug, $classLoader);
 $kernel->setPluginLoader($pluginLoader);
 
 $application = new Application($kernel->getKernel());
+$kernel->getKernel()->boot();
+$application->setName('Shopware');
+$application->setVersion($kernel->getKernel()->getContainer()->getParameter('kernel.shopware_version'));
 $application->run($input);
